@@ -1,21 +1,22 @@
 resource "kubernetes_namespace" "homework" {
-    metadata {
-        name = "production"
-    }
+  metadata {
+    name = var.namespace
+  }
 }
 
 resource "helm_release" "homework" {
-    name       = "homework"
-    chart      = "../helm/homework"
-    namespace  = kubernetes_namespace.homework.metadata[0].name
+  name       = "homework"
+  chart      = "../helm"
+  namespace  = kubernetes_namespace.homework.metadata[0].name
+  depends_on = [kubernetes_namespace.homework]
 
-    set {
-        name  = "image.tag"
-        value = 
-    }
+  set {
+    name  = "image.tag"
+    value = var.image_tag
+  }
 
-    set {
-        name  = "environment"
-        value = prod
-    }
+  set {
+    name  = "environment"
+    value = var.environment
+  }
 }

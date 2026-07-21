@@ -13,5 +13,5 @@ variable "environment" {
 variable "image_tag" {
   description = "Container image tag to deploy"
   type        = string
-  default     = "latest"
+  default     = "local"
 }

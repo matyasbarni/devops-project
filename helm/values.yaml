@@ -1,10 +1,14 @@
 replicaCount: 1
 
 image:
-  repository: myapp
-  tag: latest
+  repository: devops-homework
+  tag: local
 
 service:
-  port: 8080
+  port: 80
+
+ingress:
+  enabled: false
+  host: myapp.local
 
 environment: dev

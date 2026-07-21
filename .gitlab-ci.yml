@@ -1,13 +1,91 @@
 stages:
+  - test
   - build
+  - package
+  - plan
   - deploy
 
-build:
+variables:
+  PYTHON_VERSION: "3.11"
+  IMAGE_NAME: "$CI_REGISTRY_IMAGE/app"
+  IMAGE_TAG: "$CI_COMMIT_SHORT_SHA"
+
+.default_image: &default_image
+  image: python:3.11-slim
+
+before_script:
+  - python --version
+  - pip install --no-cache-dir -r app/requirements.txt
+
+unit_tests:
+  <<: *default_image
+  stage: test
+  script:
+    - cd app
+    - python -m pytest -q
+  artifacts:
+    when: always
+    paths:
+      - app/.pytest_cache/
+
+lint_python:
+  <<: *default_image
+  stage: test
+  script:
+    - pip install --no-cache-dir flake8
+    - flake8 app
+
+build_image:
+  <<: *default_image
   stage: build
   script:
-    - echo "Building the application..."
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG app
+    - docker build -t $IMAGE_NAME:latest app
+  needs:
+    - unit_tests
+    - lint_python
 
-deploy:
-  stage: deploy
+package_chart:
+  <<: *default_image
+  stage: package
   script:
-    - echo "Deploying the application..."
+    - apt-get update && apt-get install -y curl gnupg
+    - curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+    - helm lint helm
+    - helm template helm > /tmp/rendered.yaml
+  needs:
+    - build_image
+
+plan_deploy:
+  stage: plan
+  image: hashicorp/terraform:1.8.5
+  script:
+    - echo "Initializing Terraform"
+    - terraform -chdir=terraform init -input=false
+    - echo "Creating Terraform plan"
+    - terraform -chdir=terraform plan -out=tfplan -input=false
+  artifacts:
+    paths:
+      - terraform/tfplan
+  needs:
+    - package_chart
+  environment:
+    name: development
+    url: http://127.0.0.1
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      when: on_success
+    - when: manual
+
+apply_deploy:
+  stage: deploy
+  image: hashicorp/terraform:1.8.5
+  script:
+    - echo "Applying the approved Terraform plan"
+    - terraform -chdir=terraform apply -input=false terraform/tfplan
+  needs:
+    - plan_deploy
+  environment:
+    name: development
+    url: http://127.0.0.1
+  when: manual

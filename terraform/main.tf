@@ -9,14 +9,4 @@ resource "helm_release" "homework" {
   chart      = "../helm"
   namespace  = kubernetes_namespace.homework.metadata[0].name
   depends_on = [kubernetes_namespace.homework]
-
-  set {
-    name  = "image.tag"
-    value = var.image_tag
-  }
-
-  set {
-    name  = "environment"
-    value = var.environment
-  }
 }

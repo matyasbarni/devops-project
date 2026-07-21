@@ -88,11 +88,6 @@ Use any framework you prefer.
 ## Testing cheatsheet
 
 ```bash
-docker build -t devops-homework:local .
-docker run --rm -p 8000:8000 -e ENVIRONMENT=staging devops-homework:local
-```
-
-```bash
 curl http://127.0.0.1:8000/health
 curl http://127.0.0.1:8000/version
 curl http://127.0.0.1:8000/env

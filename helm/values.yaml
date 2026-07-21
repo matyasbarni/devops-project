@@ -11,4 +11,4 @@ ingress:
   enabled: false
   host: myapp.local
 
-environment: dev
+environment: prod

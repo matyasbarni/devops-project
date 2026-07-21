@@ -84,3 +84,23 @@ GET /config/database_url
 ## Implementation Notes
 
 Use any framework you prefer.
+
+## Testing cheatsheet
+
+```bash
+docker build -t devops-homework:local .
+docker run --rm -p 8000:8000 -e ENVIRONMENT=staging devops-homework:local
+```
+
+```bash
+curl http://127.0.0.1:8000/health
+curl http://127.0.0.1:8000/version
+curl http://127.0.0.1:8000/env
+
+curl -X POST http://127.0.0.1:8000/config \
+  -H "Content-Type: application/json" \
+  -d '{"name":"database_url","value":"postgres://example"}'
+
+curl http://127.0.0.1:8000/config/database_url
+curl -X DELETE http://127.0.0.1:8000/config/database_url
+```

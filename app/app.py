@@ -20,7 +20,7 @@ def version():
 
 @app.get("/env")
 def env():
-    return jsonify({"environment": os.getenv("ENVIRONMENT", "development")})
+    return jsonify({"environment": os.getenv("ENVIRONMENT", "dev")})
 
 
 @app.post("/config")

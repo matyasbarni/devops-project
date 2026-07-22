@@ -163,19 +163,32 @@ Update the project README with following information.
 
 ##### What You Changed
 
-Describe the changes and the rationale behind it.
+- Created a simple Flask service that exposes the required endpoints. They can be tested locally through port-forwarding.
+- Created a dockerfile for the containerization of the python app so it can be built with docker and deployed on k8s with a tf helm release.
+- Fixed the terraform errors and gave env and image setting to helm since missing proper cicd workflow.
+- Made adjustments to Helm templates for a more robust release. Made ingress disabled since local usage. Adjusted values.yaml to support current state of the chart.
+- Reworked the pipeline yaml, focusing on implementing necessary principles which could be improved in the future, in order to enable a proper cicd workflow.
 
 ##### Assumptions
 
-Describe the assumptions made while completing the assignment.
+The assignment was comprehensive and covered well the key areas that could realistically be demonstrated in a home environment. Although the result is understandably far from the level of a production-ready solution, it was fascinating to see how much planning and attention to detail is required to build even a relatively simple workflow from its individual components.
+To shape it into a complete, more robust solution, it would still require a significant amount of work. As it stands right now, it is primarily suitable for local testing rather than practical use. That said, there is huge potential for further refinement, particularly in the design and optimization of the pipeline, which could easily become an extensive project on its own...
 
 ##### Known Limitations
 
-Describe anything you intentionally omitted.
+I intentionally omitted creating a properly working cicd workflow, because that could not be fitted into the time window of the project and the available resources. The main purpose of the ci.yaml is only to broadly demonstrate its usage. That said proper environmental branching and image building is left for future improvements. Also integrating gitops methodology for continuous deployment would also be needed for production usage. Creating tests for the application that runs with pytest was also a feature I intentionally left out for now.
 
 ##### Production Improvements
 
-Describe how you would evolve this solution for production use.
+- Setting up a proper pipeline for building, testing, analysing and pushing images based on branches
+- Integrating an image registry
+- Deploying it into an AKS cluster rather than minikube
+- Setting up a gitops workflow using argocd for deploying the application and all of its components
+- Creating an underlying azure infrastructure containing keyvault for secrets, storage account for remote state, networking for the provided ingress enablement etc. based on the requirements of the project
+- Adding unit tests to the application
+- Integrating a static code analysis tool that gets triggered from the pipeline (for example SonarQube)
+- Adding persistent storage
+- Add logging, metrics exposure
 
 ### Deliverables
 

@@ -8,5 +8,7 @@ resource "helm_release" "homework" {
   name       = "homework"
   chart      = "../helm"
   namespace  = kubernetes_namespace.homework.metadata[0].name
-  depends_on = [kubernetes_namespace.homework]
+
+  wait    = true
+  timeout = 300
 }

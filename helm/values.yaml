@@ -22,4 +22,4 @@ ingress:
   enabled: false
   host: myapp.local
 
-environment: production
+environment: dev

@@ -2,6 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-myapp
+  labels:
+    app.kubernetes.io/name: myapp
+    app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -11,13 +14,34 @@ spec:
     metadata:
       labels:
         app: {{ .Release.Name }}-myapp
+        app.kubernetes.io/name: myapp
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
         - name: myapp
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8000
+            - containerPort: {{ .Values.service.targetPort | default 8000 }}
           env:
             - name: ENVIRONMENT
               value: "{{ .Values.environment }}"
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu | default "100m" }}
+              memory: {{ .Values.resources.requests.memory | default "128Mi" }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu | default "500m" }}
+              memory: {{ .Values.resources.limits.memory | default "256Mi" }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.healthCheckPath | default "/health" }}
+              port: {{ .Values.service.targetPort | default 8000 }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.healthCheckPath | default "/health" }}
+              port: {{ .Values.service.targetPort | default 8000 }}
+            initialDelaySeconds: 10
+            periodSeconds: 20

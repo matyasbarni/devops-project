@@ -165,7 +165,7 @@ Update the project README with following information.
 
 - Created a simple Flask service that exposes the required endpoints. They can be tested locally through port-forwarding.
 - Created a dockerfile for the containerization of the python app so it can be built with docker and deployed on k8s with a tf helm release.
-- Fixed the terraform errors and gave env and image setting to helm on purpose.
+- Fixed terraform syntax and logical errors
 - Made adjustments to Helm templates for a more robust release. Made ingress disabled since local usage. Adjusted values.yaml to support current state of the chart.
 - Reworked the pipeline yaml, focusing on implementing necessary principles which could be improved in the future, in order to enable a proper cicd workflow.
 
